@@ -192,10 +192,24 @@ export default function WorkoutsScreen() {
           text: 'Terminar',
           style: 'default',
           onPress: async () => {
-            const { newPRs } = await finishWorkout();
-            setShowWorkoutPanel(false);
-            await validateGoals(newPRs);
-            Alert.alert('¡Entrenamiento completado!', 'Tu progreso ha sido guardado.');
+            const { newPRs, earnedXP, leveledUp } = await finishWorkout();
+
+setShowWorkoutPanel(false);
+
+if (earnedXP) {
+  addXP(earnedXP);
+}
+
+if (leveledUp) {
+  Alert.alert('🎉 LEVEL UP', '¡Subiste de nivel!');
+}
+
+await validateGoals(newPRs);
+
+Alert.alert(
+  'Rutina completada 💪',
+  `Ganaste ${earnedXP ?? 0} XP`
+);
           },
         },
       ]
