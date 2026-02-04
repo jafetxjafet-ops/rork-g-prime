@@ -40,6 +40,8 @@ export default function WorkoutsScreen() {
     startWorkout,
     finishWorkout,
     cancelWorkout,
+    addXP,
+    levelUp,
   } = useWorkoutSession();
 
   const [searchQuery, setSearchQuery] = useState('');
