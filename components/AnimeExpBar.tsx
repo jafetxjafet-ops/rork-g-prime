@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Animated } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Modal } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
 
 interface AnimeExpBarProps {
   currentExp: number;
@@ -16,6 +16,8 @@ export default function AnimeExpBar({
   const levelPulse = useRef(new Animated.Value(1)).current;
   const prevLevel = useRef(currentLevel);
 
+  const [showLevelUp, setShowLevelUp] = useState(false);
+
   useEffect(() => {
     const progress = Math.min(currentExp / expToNextLevel, 1);
 
@@ -26,6 +28,8 @@ export default function AnimeExpBar({
     }).start();
 
     if (currentLevel > prevLevel.current) {
+      setShowLevelUp(true);
+
       Animated.sequence([
         Animated.timing(levelPulse, {
           toValue: 1.4,
@@ -38,6 +42,8 @@ export default function AnimeExpBar({
           useNativeDriver: true,
         }),
       ]).start();
+
+      setTimeout(() => setShowLevelUp(false), 2000);
     }
 
     prevLevel.current = currentLevel;
@@ -45,6 +51,15 @@ export default function AnimeExpBar({
 
   return (
     <View style={styles.container}>
+      <Modal visible={showLevelUp} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.popup}>
+            <Text style={styles.levelUpText}>🎉 LEVEL UP 🎉</Text>
+            <Text style={styles.newLevel}>Level {currentLevel}</Text>
+          </View>
+        </View>
+      </Modal>
+
       <Animated.Text
         style={[styles.level, { transform: [{ scale: levelPulse }] }]}
       >
@@ -101,5 +116,27 @@ const styles = StyleSheet.create({
     color: '#aaa',
     textAlign: 'center',
     fontSize: 12,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  popup: {
+    backgroundColor: '#222',
+    padding: 30,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  levelUpText: {
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#FFD700',
+    marginBottom: 10,
+  },
+  newLevel: {
+    fontSize: 18,
+    color: '#fff',
   },
 });
